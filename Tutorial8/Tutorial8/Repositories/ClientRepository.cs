@@ -103,4 +103,30 @@ public class ClientRepository : IClientsRepository
             }
         }
     }
+
+    public async Task<bool> ExistsRegistrationById(int clientId, int tripId, CancellationToken cancellationToken)
+    {
+        string query = "SELECT COUNT(*) FROM CLIENT_TRIP WHERE IdClient = @IdClient AND IdTrip = @IdTrip";
+        using (SqlConnection conn = new SqlConnection(_connectionString))
+        {
+            using (SqlCommand command = new SqlCommand())
+            {
+                command.Connection = conn;
+                command.CommandText = query;
+                
+                command.Parameters.AddWithValue("@IdClient", clientId);
+                command.Parameters.AddWithValue("@IdTrip", tripId);
+                await conn.OpenAsync(cancellationToken);
+                var result = await command.ExecuteScalarAsync(cancellationToken);
+
+                if (result != null && result != DBNull.Value)
+                {
+                    return Convert.ToInt32(result) > 0;
+                }
+                
+                return false;
+
+            }
+        }
+    }
 }

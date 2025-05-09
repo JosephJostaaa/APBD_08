@@ -9,5 +9,6 @@ public interface IClientsRepository
     public Task<bool> ExistsByIdAsync(int id, CancellationToken cancellationToken);
     public Task<bool> RegisterClientForTrip(int clientId, int tripId, CancellationToken cancellationToken);
     public Task<bool> CancelClientRegistration(int clientId, int tripId, CancellationToken cancellationToken);
+    public Task<bool> ExistsRegistrationById(int clientId, int tripId, CancellationToken cancellationToken);
 
 }

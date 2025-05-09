@@ -2,10 +2,22 @@
 
 public class SimpleTripFilter
 {
-    public SimpleTripFilter(int? clientId)
+    public SimpleTripFilter(int? tripId)
     {
-        ClientId = clientId;
+        TripId = tripId;
+    }
+    
+    public SimpleTripFilter(string? name)
+    {
+        Name = name;
     }
 
-    public int? ClientId { get; set; }
+    public SimpleTripFilter(string? name, int? tripId)
+    {
+        Name = name;
+        TripId = tripId;
+    }
+
+    public string? Name { get; set; }
+    public int? TripId { get; set; }
 }

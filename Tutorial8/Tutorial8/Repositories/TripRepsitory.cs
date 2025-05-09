@@ -24,16 +24,20 @@ public class TripRepository : ITripRepository
                            JOIN Country_Trip tc ON t.IdTrip = tc.IdTrip
                            JOIN Country c ON tc.IdCountry = c.IdCountry
                            WHERE 1 = 1";
-
         
-
         using (SqlConnection conn = new SqlConnection(_connectionString))
         using (SqlCommand cmd = new SqlCommand())
         {
-            if (filter?.ClientId != null)
+            if (filter?.TripId != null)
             {
                 command += " AND t.IdTrip = @IdTrip";
-                cmd.Parameters.AddWithValue("@IdTrip", filter.ClientId);
+                cmd.Parameters.AddWithValue("@IdTrip", filter.TripId);
+            }
+            
+            if (filter?.Name != null)
+            {
+                command += " AND t.Name = @Name";
+                cmd.Parameters.AddWithValue("@Name", filter.Name);
             }
             cmd.CommandText = command;
             cmd.Connection = conn;

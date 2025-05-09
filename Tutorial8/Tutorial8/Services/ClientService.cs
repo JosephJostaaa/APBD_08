@@ -36,6 +36,10 @@ public class ClientService : IClientsService
 
     public async Task<ClientRegistrationResponse> RegisterClientOnTripAsync(int clientId, int tripId, CancellationToken ct)
     {
+        if (await _clientsRepository.ExistsRegistrationById(clientId, tripId, ct))
+        {
+            return new ClientRegistrationResponse(false, "Client is already registered for this trip");
+        }
         bool exists = await _clientsRepository.ExistsByIdAsync(clientId, ct);
 
         if (!exists)
@@ -49,7 +53,7 @@ public class ClientService : IClientsService
         }
         var participantcCount = await _tripRepository.GetNumberOfParticipantsById(clientId, ct);
         
-        var trips = await _tripRepository.FindTripsAsync(ct);
+        var trips = await _tripRepository.FindTripsAsync(ct, new SimpleTripFilter(tripId));
         
         var tripToRegister = trips.FirstOrDefault(t => t.Id == tripId);
 
@@ -67,7 +71,7 @@ public class ClientService : IClientsService
 
         if (isRegistered)
         {
-            return new ClientRegistrationResponse(true, "Client registered for trip");
+            return new ClientRegistrationResponse(true, "Client was successfully registered for the trip");
         }
         
         return new ClientRegistrationResponse(false, "Could not register client");
@@ -75,7 +79,7 @@ public class ClientService : IClientsService
 
     public async Task<ClientRegistrationResponse> CancelRegistrationAsync(int clientId, int tripId, CancellationToken ct)
     {
-        var trips = await _tripRepository.FindTripsAsync(ct, new SimpleTripFilter(clientId));
+        var trips = await _tripRepository.FindAllByClientIdAsync(clientId, ct);
         var trip = trips.FirstOrDefault(t => t.Id == tripId);
         
         if (trip == null)

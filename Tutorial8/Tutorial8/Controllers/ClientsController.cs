@@ -24,6 +24,9 @@ public class ClientsController : Controller
     [HttpPost]
     public async Task<IActionResult> AddClient([FromBody] ClientRequest clientRequest, CancellationToken ct)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
         var clientId = await _clientsService.AddClientAsync(clientRequest, ct);
         
         if (clientId == -1)
@@ -37,6 +40,19 @@ public class ClientsController : Controller
     public async Task<IActionResult> UpdateTrip(int clientId, int tripId, CancellationToken ct)
     {
         var result = await _clientsService.RegisterClientOnTripAsync(clientId, tripId, ct);
+        if (result.IsSuccess)
+        {
+            return Ok(result);
+        }
+        
+        return BadRequest(result);
+        
+    }
+    
+    [HttpDelete("{clientId}/trips/{tripId}")]
+    public async Task<IActionResult> CancelRegistration(int clientId, int tripId, CancellationToken ct)
+    {
+        var result = await _clientsService.CancelRegistrationAsync(clientId, tripId, ct);
         if (result.IsSuccess)
         {
             return Ok(result);
