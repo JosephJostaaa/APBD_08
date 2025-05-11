@@ -5,7 +5,8 @@ using Tutorial8.Services;
 namespace Tutorial8.Controllers;
 
 [Route("api/[controller]")]
-public class ClientsController : Controller
+[ApiController]
+public class ClientsController : ControllerBase
 {
     private readonly IClientsService _clientsService;
 
